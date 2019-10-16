@@ -5,8 +5,9 @@
         </div>
 
 
+        <!-- 表格列表 -->
         <el-table
-            :data="tableData"
+            :data="showData"
             stripe
             style="width:100%;"
         >   
@@ -37,7 +38,20 @@
             </el-table-column>
         </el-table>
 
+        <!-- 分页 -->
+        <el-pagination
+            class="g-pagination"
+            :total="tableData.length"
+            :current-page="currentPage"
+            :page-size="pageSize"
+            @current-change="currentChange"
+            background
+        >
 
+        </el-pagination>
+
+
+        <!-- 抽屉 -->
         <el-drawer
             title="修改商品"
             direction="rtl"
@@ -82,28 +96,10 @@ import api from '@/service/api';
 export default {
     data(){
         return {
-            tableData: [
-                {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, 
-                {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, 
-                {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                },
-                {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }
-            ],
+            tableData: [],      // 表格数据
+            pageSize:10,         // 页/数量
+            currentPage:1,      // 当前页码
+            showData:[],        // 显示的数据列表
 
             drawer:false,       // 抽屉状态
 
@@ -128,8 +124,31 @@ export default {
                 console.log(res)
                 if(res.status == 200){
                     this.tableData = res.data;
+                    this.paginationData();
                 }
             })
+        },
+
+        // 分页数据 
+        paginationData(){
+            console.log("分页数据")
+            this.showData = [];
+            for(let i=0;i<this.tableData.length;i++){
+                let max = this.currentPage * this.pageSize,
+                    min = max - this.pageSize,
+                    item = this.tableData[i];
+                
+                if(i >= min && i<max){
+                    this.showData.push(item);
+                }
+
+            }
+        },
+
+        currentChange(side){
+            console.log(side)
+            this.currentPage = side;
+            this.paginationData();
         },
 
         handleAvatarSuccess(res, file) {
@@ -170,7 +189,7 @@ export default {
             const isLt2M = file.size / 1024 / 1024 < 2;
 
             if (isJPG) {
-                this.$message.error('上传图片只能是 JPG 格式!');
+                this.$message.error('上传图片只能是 JPG/gif 格式!');
             }
             if (!isLt2M) {
                 this.$message.error('上传图片大小不能超过 2MB!');
@@ -183,11 +202,18 @@ export default {
             let postData = deepClone(this.form);
             this.newImage && (postData.imgurl = this.newImage);
             console.log(postData)
+
             this.axios.post(api.updata_banner,postData).then(res=>{
                 console.log(res)
+                if(res.status == 200 && res.data.code == 1){
+                    
+                    this.getData();
+                    this.$message.success(res.data.data);
+                    this.drawer = false;
+                }
+                
             }).catch(res=>{
-                console.log("err")
-                console.log(res)
+                this.$message.error('请求错误');
             })
 
         },
@@ -225,5 +251,11 @@ export default {
         width: 280px;
         height: 178px;
         display: block;
+    }
+
+    // 分页
+    .g-pagination {
+        margin-top:50px;
+        margin-bottom:50px;
     }
 </style>
