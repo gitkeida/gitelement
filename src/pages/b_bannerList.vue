@@ -9,7 +9,8 @@
         <el-table
             :data="showData"
             stripe
-            style="width:100%;"
+            style="width:100%;min-height:800px;"
+            v-loading="isLoading"
         >   
 
             <el-table-column prop="bannerid" label="ID">  </el-table-column>
@@ -100,6 +101,7 @@ export default {
             pageSize:10,         // 页/数量
             currentPage:1,      // 当前页码
             showData:[],        // 显示的数据列表
+            isLoading:false,    // 加载中
 
             drawer:false,       // 抽屉状态
 
@@ -119,14 +121,19 @@ export default {
         },
 
         getData:function(){
+            
+            this.isLoading = true;
+
             this.axios.get(api.banner).then(res=>{
                 console.log("res")
                 console.log(res)
                 if(res.status == 200){
                     this.tableData = res.data;
                     this.paginationData();
+                    this.isLoading = false;
                 }
             })
+
         },
 
         // 分页数据 

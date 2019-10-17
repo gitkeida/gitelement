@@ -4,6 +4,8 @@ import HelloWorld from '@/components/HelloWorld'
 import Index from '@/pages/index'
 import BannerList from '@/pages/b_bannerList'
 
+const Login = () => import('@/pages/login');
+
 Vue.use(Router)
 
 export default new Router({
@@ -21,6 +23,10 @@ export default new Router({
         {path:'/banner-list',name:'轮播列表',component:BannerList}
       ]
     },
+    {
+      path: '/login',
+      component:Login
+    }
 
   ]
 })
