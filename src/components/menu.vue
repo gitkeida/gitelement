@@ -8,7 +8,7 @@
                 text-color="#ffffff"
                 active-text-color="#409EFF"
                 :collapse="isCollapse"
-                default-active="0"
+                :default-active="$route.fullPath"
                 :router="true"
             >
 
@@ -23,19 +23,19 @@
 
                         <el-menu-item v-for="(child,childIdx) in item.child" 
                             :key="childIdx" 
-                            :index="String(idx+'-'+childIdx)" 
+                            :index="child.router" 
                             @click="handleClick(child,item.title)"
-                            :route="child.router"
+                            :routesssss="child.router"
                         >{{child.title}}</el-menu-item>
                         
                     </el-submenu>
 
                     <!-- else  -->
                     <el-menu-item v-else 
-                        :index="String(idx)" 
+                        :index="item.router" 
                         :key="idx" 
                         @click="handleClick(item)"
-                        :route="item.router"                        
+                        :routessss="item.router"                        
                         >
                         
                         <i :class="item.icon"></i>
@@ -67,7 +67,7 @@ export default {
                     {title:'添加商品',router:'.d'},
                 ]},
                 {title:'用户管理',icon:'el-icon-s-custom',child:[
-                    {title:'管理员列表',router:'/'},
+                    {title:'管理员列表',router:'/user-admin'},
                     {title:'用户列表',router:'/'},
                     {title:'用户管理',router:'/'},
                 ]},

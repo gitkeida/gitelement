@@ -4,23 +4,25 @@
 
           <div class="g-login_case">
               <h3>欢迎您</h3>
-              <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-                  <el-form-item prop="name">
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
+                  <el-form-item prop="name" >
                     <el-input
                             placeholder="请输入账户"
                             prefix-icon="el-icon-user"
                             class="g-input"
                             v-model="ruleForm.name"
+                             @keyup.enter.native="login"
                             >
                     </el-input>
                   </el-form-item>
 
-                  <el-form-item prop="pwd">
+                  <el-form-item prop="pwd" >
                     <el-input
                             placeholder="请输入密码"
                             prefix-icon="el-icon-lock"
                             class="g-input"
                             v-model="ruleForm.pwd"
+                            @keyup.enter.native="login()"
                             show-password>
                     </el-input>
                   </el-form-item>
@@ -39,27 +41,43 @@
 
 <script>
 import api from '@/service/api';
+import {mapMutations,mapGetters} from 'vuex'
+
 export default {
-  name: 'HelloWorld',
+  name: '',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       ruleForm: {
           name:'',
           pwd:'',
+          pwdError:'sdf',
+          nameError:'sd',
+          errorMsg:'',
       },
       rules: {
           name:[
               {required:true,message:'请输入用户名',trigger: 'blur'},
-              { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
+              { min: 3, max: 12, message: '长度在 3 - 12 个字符', trigger: 'blur' }
           ],
           pwd: [
               {required:true,message:'请输入密码',trigger: 'blur'},
+              {min:3,max:16,message:'长度在 3 - 12 个字符',trigger:'blur'}
           ]
       }
     }
   },
+  computed:{
+      ...mapGetters([
+          'v_user',
+          'v_is_login'
+      ])
+  },
   methods:{
+      ...mapMutations([
+          'SET_USER',
+          'SET_IS_LOGIN'
+      ]),
       login:function(){
           
           this.$refs.ruleForm.validate((valid)=>{
@@ -67,16 +85,33 @@ export default {
                   this.axios.post(api.login,this.ruleForm).then(res=>{
                         console.log("登录");
                         console.log(res)
+                        if(res.data.code == 1){
+                            console.log("登录成功")
+
+                            this.$message.success(res.data.msg);
+                            this.SET_USER(res.data.data);
+
+                            this.$router.push('/home');
+
+                        } else {
+                            // this.$refs.ruleForm.fields[0].error="错误提示";
+                            this.$message.error(res.data.msg);
+                        }
                   })
 
               } else {
                   
-                  console.log('登录失败');
+                  console.log('验证失败');
                   return false;
 
               }
           })
       }
+  },
+  mounted:function(){
+      
+      // 清除登录信息
+      this.SET_IS_LOGIN(false);
   }
 }
 </script>

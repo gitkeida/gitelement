@@ -15,10 +15,17 @@
                             <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click="isCollapse = !isCollapse"></i>
                         </el-col>
 
-                        <el-col :span="20" class="g-header_breadcrumb">
+                        <el-col :span="15" class="g-header_breadcrumb">
                             <el-breadcrumb separator-class="el-icon-arrow-right">
                                 <el-breadcrumb-item v-for="(item,idx) in breadcrumbData" :key="idx">{{item}}</el-breadcrumb-item>
                             </el-breadcrumb>
+                        </el-col>
+
+                        <el-col :span="7" class="g-user_handle">
+                            <ul >
+                                <li>管理员：<span>{{v_user.user_name}}</span></li>
+                                <li><el-button @click="$router.push('/login')">退出</el-button></li>
+                            </ul>
                         </el-col>
                     </el-row>
 
@@ -46,6 +53,7 @@
 
 <script>
 import Menu from '@/components/menu'
+import {mapGetters} from 'vuex'
 export default {
     data(){
         return{
@@ -53,14 +61,20 @@ export default {
             isCollapse:false,
             breadcrumbData:['首页'],
             navData:[
-                {title:'首页',router:'/',parent:''}
+                {title:'首页',router:'/home',parent:''}
             ],
 
         }
     },
     components:{Menu},
+    computed:{
+        ...mapGetters([
+            'v_user'
+        ])
+    },
     methods:{
         getBreadcrumb:function(msg){
+            // 获取导航栏点击加载nav
             console.log("breadcrumb")
             console.log(msg)
 
@@ -119,6 +133,7 @@ export default {
             display:flex;
             align-items:center;
             height:100%;
+            min-width:40px;
 
             & i{font-size:30px;cursor:pointer;}
         }
@@ -134,6 +149,29 @@ export default {
                 line-height:30px;
             }
         }
+
+        & .g-user_handle {
+            height:100%;
+
+            &>ul {
+                display:flex;
+                align-items:center;
+                justify-content:flex-end;
+                height:100%;
+
+                &>li {
+                    margin-right:50px;
+
+                    &:last-child {
+                        margin:0;
+                    }
+                }
+            }
+
+
+        }
+
+
     }
 
     // nav

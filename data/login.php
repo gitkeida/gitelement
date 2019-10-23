@@ -1,10 +1,11 @@
 <?php
 
+session_start();
+
 header("Content-Type:application/json");
 
 require_once('./init.php');
 
-// session_start();
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -25,19 +26,20 @@ if(!preg_match($pPattern,$pwd)){  //验证密码格式
 }
 
 
-$sql = "SELECT user_id, user_name FROM m_user_admin WHERE user_name='$uname' AND user_password='$pwd'";
+$sql = "SELECT user_id, user_name,expire,user_db FROM m_user_admin WHERE user_name='$uname' AND user_password='$pwd'";
 
 $result = sql_execute($sql);
 
 if(count($result)){
-    // $_SESSION['user_id'] = $result[0]['user_id'];
+
+    $_SESSION['user_id'] = $result[0]['user_id'];
     
     // $result[0]['token'] = set_token($uname);
 
-    echo '{"code":1, "data":'.json_encode($result[0]).'}';
+    echo '{"code":1, "msg":"登录成功", "data":'.json_encode($result[0]).'}';
 
 } else {
-    echo '{"code":-3, "data":"用户名或密码错误"}';
+    echo '{"code":-3, "msg":"用户名或密码错误"}';
 }
 
 // function set_token($user_name){

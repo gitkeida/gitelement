@@ -6,8 +6,8 @@ axios.defaults.baseURL = 'http://119.29.67.165/mineData/admin/data/';
 
 axios.interceptors.request.use(
     config =>{
-        console.log("请求消息头：");
-        console.log(config)
+        // console.log("请求消息头：");
+        // console.log(config)
         if(config.method == 'post'){
 
             config.headers = {'Content-Type':'application/x-www-form-urlencoded'};
