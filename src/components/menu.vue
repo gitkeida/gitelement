@@ -80,9 +80,9 @@ export default {
     methods: {
 
       handleClick(child,parent){
-          console.log("click")
+        //   console.log("click")
           parent && (child.parent = parent)
-          console.log(child)
+        //   console.log(child)
 
           this.$emit("breadcrumbData",child);
       }

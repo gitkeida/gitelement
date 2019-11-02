@@ -75,8 +75,8 @@ export default {
     methods:{
         getBreadcrumb:function(msg){
             // 获取导航栏点击加载nav
-            console.log("breadcrumb")
-            console.log(msg)
+            // console.log("breadcrumb")
+            // console.log(msg)
 
             let isHave = false,
                 arr = [];

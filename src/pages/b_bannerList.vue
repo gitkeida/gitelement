@@ -93,7 +93,6 @@
 </template>
 
 <script>
-import api from '@/service/api';
 export default {
     data(){
         return {
@@ -124,7 +123,7 @@ export default {
             
             this.isLoading = true;
 
-            this.axios.get(api.banner).then(res=>{
+            this.$api.banner().then(res=>{
                 console.log("res")
                 console.log(res)
                 if(res.status == 200){
@@ -210,7 +209,7 @@ export default {
             this.newImage && (postData.imgurl = this.newImage);
             console.log(postData)
 
-            this.axios.post(api.updata_banner,postData).then(res=>{
+            this.$api.updata_banner(postData).then(res=>{
                 console.log(res)
                 if(res.status == 200 && res.data.code == 1){
                     

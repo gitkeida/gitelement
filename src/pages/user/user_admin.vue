@@ -9,18 +9,30 @@
             :row-class-name="tableRowClassName"
             border
         >
-            <el-table-column prop="user_id" label="编号"></el-table-column>
-            <el-table-column prop="reg_time" label="日期"></el-table-column>
+            <el-table-column label="编号" type="index" width="80"></el-table-column>
+            <el-table-column prop="user_id" label="ID"></el-table-column>
             <el-table-column prop="user_name" label="用户名"></el-table-column>
+            <el-table-column prop="reg_time" label="注册时间"></el-table-column>
             <el-table-column prop="user_email" label="email"></el-table-column>
-            <el-table-column prop="expire" label="账号状态"></el-table-column>
+            <el-table-column label="账号状态">
+                <template slot-scope="scope">
+                    <span>{{scope.row.expire == 0 ? '正常' : '禁用'}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100" >
+                <template slot-scope="scope">
+                    <div align="center">
+                        <el-button @click="banned(scope.row.user_id)" type="danger" size="mini" :disabled="v_user.user_id == scope.row.user_id ? 'disabled' : false">封禁</el-button>
+                    </div>
+                </template>
+            </el-table-column>
         </el-table>
+
   </div>
 </template>
 
 <script>
 import {mapGetters,mapMutations} from 'vuex'
-import api from '@/service/api'
 export default {
   name: '',
   data () {
@@ -47,7 +59,7 @@ export default {
           return '';
       },
       getData:function(){
-          this.axios.post(api.user_admin,{
+          this.$api.user_admin({
               user_db: this.v_user.user_db
           }).then(res=>{
               console.log(res);
@@ -60,7 +72,12 @@ export default {
               }
 
           })
-      }
+      },
+      // 封禁
+      banned:function(id){
+          console.log(id)
+          this.$message(id)
+      },
   },
   mounted:function(){
       this.getData();

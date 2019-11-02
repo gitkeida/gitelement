@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import api from '@/service/api';
 import {mapMutations,mapGetters} from 'vuex'
 
 export default {
@@ -82,7 +81,7 @@ export default {
           
           this.$refs.ruleForm.validate((valid)=>{
               if(valid){
-                  this.axios.post(api.login,this.ruleForm).then(res=>{
+                  this.$api.login(this.ruleForm).then(res=>{
                         console.log("登录");
                         console.log(res)
                         if(res.data.code == 1){
