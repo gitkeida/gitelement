@@ -80,11 +80,17 @@ export default {
     methods: {
 
       handleClick(child,parent){
-        //   console.log("click")
-          parent && (child.parent = parent)
+          
         //   console.log(child)
+          if(getStorage('navSide') == child.router) return;
+
+          parent && (child.parent = parent);
+
+          // 保存当前页面地址
+          setStorage('navSide',child.router);
 
           this.$emit("breadcrumbData",child);
+
       }
     }
 }

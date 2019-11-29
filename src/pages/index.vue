@@ -17,7 +17,7 @@
 
                         <el-col :span="15" class="g-header_breadcrumb">
                             <el-breadcrumb separator-class="el-icon-arrow-right">
-                                <el-breadcrumb-item v-for="(item,idx) in breadcrumbData" :key="idx">{{item}}</el-breadcrumb-item>
+                                <el-breadcrumb-item v-for="(item,idx) in breadcrumbText" :key="idx">{{item}}</el-breadcrumb-item>
                             </el-breadcrumb>
                         </el-col>
 
@@ -34,7 +34,7 @@
                 <nav class="g-nav">
                     <ul>
                         <li v-for="(item,idx) in navData" :key="idx" @click="navTo(item)" :class="{active: $route.fullPath == item.router}">
-                            <span>{{item.title}} <span v-if="item.title != '首页'" class="el-icon-close"></span></span>
+                            <span>{{item.title}} <span v-if="item.title != '首页'" class="el-icon-close" @click.stop="navClose(item,idx)"></span></span>
                         </li>
                     </ul>
                 </nav>
@@ -59,10 +59,8 @@ export default {
         return{
             msg:'',
             isCollapse:false,
-            breadcrumbData:['首页'],
-            navData:[
-                {title:'首页',router:'/home',parent:''}
-            ],
+            breadcrumbData:{},      // 面包屑对象
+            navData:[],             // 导航栏列表
 
         }
     },
@@ -70,23 +68,26 @@ export default {
     computed:{
         ...mapGetters([
             'v_user'
-        ])
+        ]),
+        // 面包屑
+        breadcrumbText(){
+            let arr = [];
+            this.breadcrumbData.parent && arr.push(this.breadcrumbData.parent);
+            arr.push(this.breadcrumbData.title);
+            return arr;
+        }
     },
     methods:{
+
+        // menu子组件触发事件
         getBreadcrumb:function(msg){
             // 获取导航栏点击加载nav
-            // console.log("breadcrumb")
-            // console.log(msg)
 
-            let isHave = false,
-                arr = [];
+            let isHave = false;
                 
-            msg.parent && arr.push(msg.parent);
-            
-            arr.push(msg.title)
             
             // header 面包屑
-            this.breadcrumbData = arr;
+            this.breadcrumbData = msg;
 
 
             // nav
@@ -96,19 +97,75 @@ export default {
 
             !isHave && this.navData.push(msg);
 
+            !isHave && setStorage('navList',this.navData);
+
         },
 
         navTo:function(item){
-            let arr = [];
-            
-            item.parent && arr.push(item.parent);
-            
-            arr.push(item.title)
 
-            this.breadcrumbData = arr;
+            // 现已由 $route 监听 改变
+            // this.breadcrumbData = item;
 
+            // setStorage('navSide',item.router);
 
             this.$router.push(item.router);
+
+        },
+
+        // 关闭该导航栏选项
+        navClose: function(item,idx) {
+            console.log(item,idx)
+
+            // 判断是否是当前页面
+            let isSelf = this.navData[idx].router == this.$route.fullPath;
+
+ 
+
+            this.navData.splice(idx,1);
+
+            setStorage('navList',this.navData);
+
+            isSelf && this.$router.replace(this.navData[idx-1].router);
+            
+        },
+
+        navInit:function(){
+            /**
+             * 导航栏及面包屑初始化
+             */
+            let navInit = [{title:'首页',router:'/home',parent:''},],
+                navSide = getStorage('navSide') || '/home';
+
+            if(getStorage('navList') == null) {
+                setStorage('navList',navInit);
+            }
+
+            this.navData = getStorage('navList') || navInit;
+
+            // 面包屑
+            this.breadcrumbData = this.navData.find(i => {
+                return i.router == navSide;
+            })
+
+            console.log(this.navData)
+            console.log(navSide)
+        },
+
+    },
+    mounted:function(){
+
+        this.navInit();
+
+
+    },
+    watch: {
+        '$route': function(to,from) {
+            // 面包屑
+            this.breadcrumbData = this.navData.find(i => {
+                return i.router == to.fullPath;
+            })
+
+            setStorage('navSide',to.fullPath);
         }
     }
 }

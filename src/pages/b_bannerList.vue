@@ -2,6 +2,7 @@
     <div>
         <div class="g-title">
             <h2>轮播列表</h2>
+            <el-button type="primary" class="g-title_btn" @click="showDrawer = true">添加轮播图</el-button>
         </div>
 
 
@@ -126,11 +127,10 @@ export default {
             this.$api.banner().then(res=>{
                 console.log("res")
                 console.log(res)
-                if(res.status == 200){
-                    this.tableData = res.data;
-                    this.paginationData();
-                    this.isLoading = false;
-                }
+                this.tableData = res;
+                this.paginationData();
+                this.isLoading = false;
+
             })
 
         },
@@ -150,7 +150,8 @@ export default {
 
             }
         },
-
+        
+        // 分页改变
         currentChange(side){
             console.log(side)
             this.currentPage = side;
@@ -211,10 +212,10 @@ export default {
 
             this.$api.updata_banner(postData).then(res=>{
                 console.log(res)
-                if(res.status == 200 && res.data.code == 1){
+                if( res.code == 1){
                     
                     this.getData();
-                    this.$message.success(res.data.data);
+                    this.$message.success(res.data);
                     this.drawer = false;
                 }
                 

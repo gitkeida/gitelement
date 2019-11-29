@@ -4,7 +4,7 @@ session_start();
 
 header("Content-Type:application/json");
 
-require_once('./init.php');
+require_once('../init.php');
 
 
 $data = json_decode(file_get_contents("php://input"));

@@ -11,6 +11,12 @@ const state = {
     token:'',
 };
 
+// 仅记录storage 列表
+const storage = {
+    navList:[],         // 导航栏列表
+    navSide: '/home',   // 导航栏当前显示页面
+};
+
 export default new Vuex.Store({
     state,
     mutations,

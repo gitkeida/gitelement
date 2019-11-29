@@ -4,7 +4,7 @@ session_start();
 
 header("Content-Type:application/json");
 
-require_once('./init.php');
+require_once('../init.php');
 
 
 $data = json_decode(file_get_contents("php://input"));
@@ -32,11 +32,26 @@ $result = sql_execute($sql);
 
 if(count($result)){
 
-    $_SESSION['user_id'] = $result[0]['user_id'];
-    
-    // $result[0]['token'] = set_token($uname);
+    $user_id = $result[0]['user_id'];
+    $_SESSION['userid'] = $result[0]['user_id'];
 
-    echo '{"code":1, "msg":"登录成功", "data":'.json_encode($result[0]).'}';
+
+
+    $sql2 = "SELECT expire FROM m_user_admin WHERE user_id = $user_id AND expire = 0";
+
+    $result2 = sql_execute($sql2);
+
+    if(count($result2)) {
+
+        echo '{"code":1,"msg":"登录成功", "data":'.json_encode($result[0]).'}';
+
+    } else {
+
+        echo '{"code":-1, "msg":"登录失败，该账号已被封禁","data":[]}';
+
+    }
+
+    
 
 } else {
     echo '{"code":-3, "msg":"用户名或密码错误"}';

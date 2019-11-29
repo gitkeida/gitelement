@@ -28,5 +28,14 @@ html,body,#app{height:100%;}
   font-size:14px;
   border-bottom:1px solid #ddd;
   margin-bottom:30px;
+  position:relative;
+
+  &>.g-title_btn {
+    position:absolute;
+    right:0;
+    top:0;
+  }
+
 }
+
 </style>

@@ -19,7 +19,27 @@ axios.interceptors.request.use(
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 
+axios.interceptors.response.use(
+    response => {
 
-Vue.prototype.axios = axios;
+        if(response.status == 200) {
+
+            return Promise.resolve(response.data);
+        } else {
+            return Promise.reject(response);
+        }
+    },
+    error => {
+
+        if(error.response){
+            console.log('请求错误：')
+            console.log(error.response.status)
+        }
+    
+        return Promise.reject(error);
+    }
+)
+
+// Vue.prototype.axios = axios;
 
 export default axios;
